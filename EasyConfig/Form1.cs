@@ -63,8 +63,11 @@ namespace EasyConfig
 
 		private void RemoveConfigButton_Click(object sender, EventArgs e)
 		{
-			ConfigCache.Remove(ConfigListBox.SelectedItem.ToString());
-			ConfigListBox.Items.Remove(ConfigListBox.SelectedItem);
+			if (ConfigListBox.SelectedItem == null)
+			{
+				ConfigCache.Remove(ConfigListBox.SelectedItem.ToString());
+				ConfigListBox.Items.Remove(ConfigListBox.SelectedItem);
+			}
 		}
 
 		private void SaveButton_Click(object sender, EventArgs e)
