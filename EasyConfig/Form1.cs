@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
+using System.Threading;
+using System.Globalization;
 
 namespace EasyConfig
 {
@@ -16,19 +18,18 @@ namespace EasyConfig
 			InitializeComponent();
 		}
 
-		private void OpenConfigButton_Click(object sender, EventArgs e)
+		private void Form1_Load(object sender, EventArgs e)
 		{
-			using (OpenFileDialog openFileDialog = new OpenFileDialog())
+			string prop = Properties.Settings.Default["lastconfig"].ToString();
+			if (prop.Length > 0)
 			{
-				openFileDialog.InitialDirectory = "c:\\";
-				openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-				openFileDialog.FilterIndex = 2;
-				openFileDialog.RestoreDirectory = true;
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
-				{
-					cPath = openFileDialog.FileName;
-				}
+				cPath = prop;
+				LoadConfig(prop);
 			}
+		}
+
+		private void LoadConfig(string cPath)
+		{
 			if (cPath == null) MessageBox.Show("Error", "Can't find file");
 
 			foreach (string config in File.ReadAllLines(cPath))
@@ -45,12 +46,33 @@ namespace EasyConfig
 			}
 		}
 
+		private void OpenConfigButton_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog openFileDialog = new OpenFileDialog())
+			{
+				openFileDialog.InitialDirectory = "c:\\";
+				openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+				openFileDialog.FilterIndex = 2;
+				openFileDialog.RestoreDirectory = true;
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					cPath = openFileDialog.FileName;
+					Properties.Settings.Default["lastconfig"] = cPath;
+					Properties.Settings.Default.Save();
+					LoadConfig(cPath);
+				}
+			}
+		}
+
 		private void AddConfigButtom_Click(object sender, EventArgs e)
 		{
 			string input = Interaction.InputBox("Enter config to add\n\nFormat: config: value", "Config Adder", "", -1, -1);
-			int cIndex = input.IndexOf(':');
-			ConfigListBox.Items.Add(input.Substring(0, cIndex));
-			ConfigCache.Add(input.Substring(0, cIndex), input.Substring(cIndex + 2));
+			if (input != string.Empty)
+			{
+				int cIndex = input.IndexOf(':');
+				ConfigListBox.Items.Add(input.Substring(0, cIndex));
+				ConfigCache.Add(input.Substring(0, cIndex), input.Substring(cIndex + 2));
+			}
 		}
 
 		private void ConfigListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -63,7 +85,7 @@ namespace EasyConfig
 
 		private void RemoveConfigButton_Click(object sender, EventArgs e)
 		{
-			if (ConfigListBox.SelectedItem == null)
+			if (ConfigListBox.SelectedItem != null)
 			{
 				ConfigCache.Remove(ConfigListBox.SelectedItem.ToString());
 				ConfigListBox.Items.Remove(ConfigListBox.SelectedItem);
@@ -105,6 +127,25 @@ namespace EasyConfig
 			if (ConfigListBox.SelectedItem != null)
 			{
 				ConfigCache[ConfigListBox.SelectedItem.ToString()] = ConfigValueTextbox.Text;
+			}
+		}
+
+		private void SearchTextbox_TextChanged(object sender, EventArgs e)
+		{
+			ConfigListBox.Items.Clear();
+			if (SearchTextbox.Text == string.Empty)
+			{
+				foreach (KeyValuePair<string, string> entry in ConfigCache)
+				{
+					ConfigListBox.Items.Add(entry.Key);
+				}
+			}
+			foreach (KeyValuePair<string, string> entry in ConfigCache)
+			{
+				if (entry.Key.Contains(SearchTextbox.Text) && SearchTextbox.Text != string.Empty)
+				{
+					ConfigListBox.Items.Add(entry.Key);
+				}
 			}
 		}
 	}

@@ -36,6 +36,8 @@
 			this.RemoveConfigButton = new System.Windows.Forms.Button();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.ConfigValueTextbox = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.SearchTextbox = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// ConfigListBox
@@ -100,11 +102,30 @@
 			this.ConfigValueTextbox.TabIndex = 6;
 			this.ConfigValueTextbox.TextChanged += new System.EventHandler(this.ConfigValueTextbox_TextChanged);
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(13, 406);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(41, 13);
+			this.label1.TabIndex = 7;
+			this.label1.Text = "Search";
+			// 
+			// SearchTextbox
+			// 
+			this.SearchTextbox.Location = new System.Drawing.Point(59, 403);
+			this.SearchTextbox.Name = "SearchTextbox";
+			this.SearchTextbox.Size = new System.Drawing.Size(237, 20);
+			this.SearchTextbox.TabIndex = 8;
+			this.SearchTextbox.TextChanged += new System.EventHandler(this.SearchTextbox_TextChanged);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(312, 413);
+			this.ClientSize = new System.Drawing.Size(312, 431);
+			this.Controls.Add(this.SearchTextbox);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.ConfigValueTextbox);
 			this.Controls.Add(this.SaveButton);
 			this.Controls.Add(this.RemoveConfigButton);
@@ -115,7 +136,8 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Form1";
-			this.Text = "EasyConfig v1.0.0";
+			this.Text = "EasyConfig v1.0.0 - Cyanox";
+			this.Load += new System.EventHandler(this.Form1_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -130,6 +152,8 @@
 		private System.Windows.Forms.Button RemoveConfigButton;
 		private System.Windows.Forms.Button SaveButton;
 		private System.Windows.Forms.TextBox ConfigValueTextbox;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.TextBox SearchTextbox;
 	}
 }
 
