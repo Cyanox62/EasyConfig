@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
-using System.Threading;
-using System.Globalization;
 
 namespace EasyConfig
 {
@@ -21,7 +19,7 @@ namespace EasyConfig
 		private void Form1_Load(object sender, EventArgs e)
 		{
 			string prop = Properties.Settings.Default["lastconfig"].ToString();
-			if (prop.Length > 0)
+			if (prop.Length > 0 && File.Exists(prop))
 			{
 				cPath = prop;
 				LoadConfig(prop);
@@ -30,7 +28,7 @@ namespace EasyConfig
 
 		private void LoadConfig(string cPath)
 		{
-			if (cPath == null) MessageBox.Show("Error", "Can't find file");
+			if (cPath == null) MessageBox.Show("Error", "Can't find file", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
 			foreach (string config in File.ReadAllLines(cPath))
 			{

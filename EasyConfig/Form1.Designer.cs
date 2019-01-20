@@ -38,6 +38,7 @@
 			this.ConfigValueTextbox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SearchTextbox = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// ConfigListBox
@@ -96,9 +97,9 @@
 			// 
 			// ConfigValueTextbox
 			// 
-			this.ConfigValueTextbox.Location = new System.Drawing.Point(9, 70);
+			this.ConfigValueTextbox.Location = new System.Drawing.Point(49, 70);
 			this.ConfigValueTextbox.Name = "ConfigValueTextbox";
-			this.ConfigValueTextbox.Size = new System.Drawing.Size(285, 20);
+			this.ConfigValueTextbox.Size = new System.Drawing.Size(245, 20);
 			this.ConfigValueTextbox.TabIndex = 6;
 			this.ConfigValueTextbox.TextChanged += new System.EventHandler(this.ConfigValueTextbox_TextChanged);
 			// 
@@ -119,11 +120,21 @@
 			this.SearchTextbox.TabIndex = 8;
 			this.SearchTextbox.TextChanged += new System.EventHandler(this.SearchTextbox_TextChanged);
 			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(11, 73);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(34, 13);
+			this.label2.TabIndex = 9;
+			this.label2.Text = "Value";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(312, 431);
+			this.Controls.Add(this.label2);
 			this.Controls.Add(this.SearchTextbox);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.ConfigValueTextbox);
@@ -154,6 +165,7 @@
 		private System.Windows.Forms.TextBox ConfigValueTextbox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox SearchTextbox;
+		private System.Windows.Forms.Label label2;
 	}
 }
 
