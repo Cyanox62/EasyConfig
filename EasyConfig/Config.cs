@@ -72,7 +72,7 @@ namespace EasyConfig
 
 				case Code.Ldc_I4_S:
 					// Actually an integer
-					value = (int) curInstruction.Operand;
+					value = curInstruction.Operand;
 					break;
 
 				case Code.Ldc_R4:
