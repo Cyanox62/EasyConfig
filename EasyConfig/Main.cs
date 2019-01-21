@@ -37,7 +37,7 @@ namespace EasyConfig
 			foreach (string path in Properties.Settings.Default.lastplugins)
 			{
 				Plugin[] plugins = Plugin.Load(path);
-				foreach (Config config in plugins.SelectMany(x => x.Configs))
+				foreach (Config config in plugins.SelectMany(x => x.Configs).Where(x => !configCache.ContainsKey(x.Key)))
 				{
 					AddConfig(config.Key, config.Value);
 				}
@@ -83,8 +83,8 @@ namespace EasyConfig
 		{
 			using (OpenFileDialog openFileDialog = new OpenFileDialog
 			{
-				Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
-				FilterIndex = 2,
+				Filter = "config files (*.txt)|*.txt|All files (*.*)|*.*",
+				FilterIndex = 1,
 				RestoreDirectory = true
 			})
 			{
@@ -119,17 +119,17 @@ namespace EasyConfig
 						}
 						else
 						{
-							MessageBox.Show("Error", "Key already exists. Please edit the existing config before adding a new config.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							MessageBox.Show("Key already exists. Please edit the existing config before adding a new config.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						}
 					}
 					else
 					{
-						MessageBox.Show("Error", "No value in new config line found. Please put a value next time.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show("No value in new config line found. Please put a value next time.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 				else
 				{
-					MessageBox.Show("Error", "No value in new config line found. Please make sure you have a colon to separate the key from the value.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("No value in new config line found. Please make sure you have a colon to separate the key from the value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
 		}
@@ -222,7 +222,7 @@ namespace EasyConfig
 					Properties.Settings.Default.Save();
 
 					Plugin[] plugins = Plugin.Load(cPath);
-					foreach (Config config in plugins.SelectMany(x => x.Configs))
+					foreach (Config config in plugins.SelectMany(x => x.Configs).Where(x => !configCache.ContainsKey(x.Key)))
 					{
 						AddConfig(config.Key, config.Value);
 					}
