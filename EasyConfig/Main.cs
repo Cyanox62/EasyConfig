@@ -93,7 +93,6 @@ namespace EasyConfig
 			using (OpenFileDialog openFileDialog = new OpenFileDialog
 			{
 				Filter = "Config files (*.txt)|*.txt|All files (*.*)|*.*",
-				FilterIndex = 1,
 				RestoreDirectory = true
 			})
 			{
