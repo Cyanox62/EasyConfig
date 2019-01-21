@@ -1,6 +1,6 @@
 ﻿namespace EasyConfig
 {
-	partial class Form1
+	partial class Main
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,10 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.ConfigListBox = new System.Windows.Forms.ListBox();
 			this.OpenConfigButton = new System.Windows.Forms.Button();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.fileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.AddConfigButtom = new System.Windows.Forms.Button();
 			this.RemoveConfigButton = new System.Windows.Forms.Button();
 			this.SaveButton = new System.Windows.Forms.Button();
@@ -61,9 +61,9 @@
 			this.OpenConfigButton.UseVisualStyleBackColor = true;
 			this.OpenConfigButton.Click += new System.EventHandler(this.OpenConfigButton_Click);
 			// 
-			// openFileDialog1
+			// fileDialog
 			// 
-			this.openFileDialog1.FileName = "openFileDialog1";
+			this.fileDialog.FileName = "fileDialog";
 			// 
 			// AddConfigButtom
 			// 
@@ -129,7 +129,7 @@
 			this.label2.TabIndex = 9;
 			this.label2.Text = "Value";
 			// 
-			// Form1
+			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -146,9 +146,9 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
-			this.Name = "Form1";
+			this.Name = "Main";
 			this.Text = "EasyConfig v1.0.0 - Cyanox";
-			this.Load += new System.EventHandler(this.Form1_Load);
+			this.Load += new System.EventHandler(this.Main_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -158,7 +158,7 @@
 
 		private System.Windows.Forms.ListBox ConfigListBox;
 		private System.Windows.Forms.Button OpenConfigButton;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.OpenFileDialog fileDialog;
 		private System.Windows.Forms.Button AddConfigButtom;
 		private System.Windows.Forms.Button RemoveConfigButton;
 		private System.Windows.Forms.Button SaveButton;
