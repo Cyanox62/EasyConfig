@@ -158,7 +158,18 @@ namespace EasyConfig
 		{
 			LoadConfig(cPath);
 
-			File.WriteAllLines(cPath, configCache.OrderBy(x => x.Key).Select(x => $"{x.Key}: {x.Value}"));
+			string[] lines = File.ReadAllLines(cPath);
+			string[] existingKeys = lines
+				.Where(x => x.Length > 0 && x[0] != '#')
+				.Select(x =>
+				{
+					string[] splits = x.Split(':');
+					return splits.Length == 0 ? null : splits[0];
+				})
+				.Where(x => x != null)
+				.ToArray();
+
+			File.WriteAllLines(cPath, lines.Concat(configCache.Where(x => !existingKeys.Contains(x.Key)).OrderBy(x => x.Key).Select(x => $"{x.Key}: {x.Value}")));
 			MessageBox.Show("All changes saved", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 

@@ -139,7 +139,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Main";
-			this.Text = "EasyConfig v1.0.0 - Cyanox";
+			this.Text = "EasyConfig v1.0.0 - Cyandrox";
 			this.Load += new System.EventHandler(this.Main_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
