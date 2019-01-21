@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,18 +17,43 @@ namespace EasyConfig
 		public Main()
 		{
 			configCache = new Dictionary<string, string>();
+			if (Properties.Settings.Default.lastplugins == null)
+			{
+				Properties.Settings.Default.lastplugins = new StringCollection();
+			}
 
 			InitializeComponent();
 		}
 
 		private void Main_Load(object sender, EventArgs e)
 		{
-			string prop = Properties.Settings.Default["lastconfig"].ToString();
+			string prop = Properties.Settings.Default.lastconfig;
 			if (prop.Length > 0 && File.Exists(prop))
 			{
 				cPath = prop;
 				LoadConfig(prop);
 			}
+
+			foreach (string path in Properties.Settings.Default.lastplugins)
+			{
+				Plugin[] plugins = Plugin.Load(path);
+				foreach (Config config in plugins.SelectMany(x => x.Configs))
+				{
+					AddConfig(config.Key, config.Value);
+				}
+			}
+		}
+
+		private void AddConfig(string key, string value)
+		{
+			configCache.Add(key, value);
+			ConfigListBox.Items.Add(key);
+		}
+
+		private void RemoveConfig(string key)
+		{
+			configCache.Remove(key);
+			ConfigListBox.Items.Remove(key);
 		}
 
 		private void LoadConfig(string cPath)
@@ -37,31 +63,20 @@ namespace EasyConfig
 
 			// I know this looks like an abomination, but it parses each line asynchronously so large configs don't halt the UI
 			string[] configs = File.ReadAllLines(cPath);
-			ConfigListBox.Items.AddRange(configs
-				.Select(config =>
+			foreach (string config in configs.Select(x => x.Trim()))
+			{
+				if (config.Length > 0 &&
+				    config[0] != '#')
 				{
-					config = config.Trim();
+					int cIndex = config.IndexOf(':');
+					int valueIndex = cIndex + 1;
 
-					if (config.Length > 0 &&
-					    config[0] != '#')
+					if (cIndex != -1 && valueIndex < config.Length && !configCache.ContainsKey(config.Substring(0, cIndex)))
 					{
-						int cIndex = config.IndexOf(':');
-						int valueIndex = cIndex + 1;
-
-						if (cIndex != -1 && valueIndex < config.Length && !configCache.ContainsKey(config.Substring(0, cIndex)))
-						{
-							string key = config.Substring(0, cIndex);
-
-							configCache.Add(key, config.Substring(valueIndex).Trim());
-							return (object) key;
-						}
+						AddConfig(config.Substring(0, cIndex), config.Substring(valueIndex).Trim());
 					}
-
-					return null;
-				})
-				.Where(x => x != null)
-				.ToArray()
-			);
+				}
+			}
 		}
 
 		private void OpenConfigButton_Click(object sender, EventArgs e)
@@ -76,7 +91,7 @@ namespace EasyConfig
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
 					cPath = openFileDialog.FileName;
-					Properties.Settings.Default["lastconfig"] = cPath;
+					Properties.Settings.Default.lastconfig = cPath;
 					Properties.Settings.Default.Save();
 
 					LoadConfig(cPath);
@@ -86,12 +101,36 @@ namespace EasyConfig
 
 		private void AddConfigButtom_Click(object sender, EventArgs e)
 		{
-			string input = Interaction.InputBox("Enter config to add\n\nFormat: config: value", "Config Adder", "", -1, -1);
+			string input = Interaction.InputBox("Enter config to add\n\nFormat: key:value", "Config Adder", "", -1, -1).Trim();
+
 			if (input != string.Empty)
 			{
 				int cIndex = input.IndexOf(':');
-				ConfigListBox.Items.Add(input.Substring(0, cIndex));
-				configCache.Add(input.Substring(0, cIndex), input.Substring(cIndex + 2));
+
+				if (cIndex != -1)
+				{
+					int valueIndex = cIndex + 1;
+
+					if (valueIndex < input.Length)
+					{
+						if (!configCache.ContainsKey(input.Substring(0, cIndex)))
+						{
+							AddConfig(input.Substring(0, cIndex), input.Substring(valueIndex).Trim());
+						}
+						else
+						{
+							MessageBox.Show("Error", "Key already exists. Please edit the existing config before adding a new config.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+					}
+					else
+					{
+						MessageBox.Show("Error", "No value in new config line found. Please put a value next time.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+				else
+				{
+					MessageBox.Show("Error", "No value in new config line found. Please make sure you have a colon to separate the key from the value.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
 		}
 
@@ -166,6 +205,54 @@ namespace EasyConfig
 				.Select(x => (object) x.Key)
 				.ToArray()
 			);
+		}
+
+		private async void AddPluginButton_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog openFileDialog = new OpenFileDialog
+			{
+				Filter = "Smod2 Plugins (*.dll)|*.dll",
+				RestoreDirectory = true
+			})
+			{
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					cPath = openFileDialog.FileName;
+					Properties.Settings.Default.lastplugins.Add(cPath);
+					Properties.Settings.Default.Save();
+
+					Plugin[] plugins = Plugin.Load(cPath);
+					foreach (Config config in plugins.SelectMany(x => x.Configs))
+					{
+						AddConfig(config.Key, config.Value);
+					}
+				}
+			}
+
+			await Task.CompletedTask;
+		}
+
+		private void RemovePluginButton_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog openFileDialog = new OpenFileDialog
+			{
+				Filter = "Smod2 Plugins (*.dll)|*.dll",
+				RestoreDirectory = true
+			})
+			{
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					cPath = openFileDialog.FileName;
+					Properties.Settings.Default.lastplugins.Remove(cPath);
+					Properties.Settings.Default.Save();
+
+					Plugin[] plugins = Plugin.Load(cPath);
+					foreach (Config config in plugins.SelectMany(x => x.Configs))
+					{
+						RemoveConfig(config.Key);
+					}
+				}
+			}
 		}
 	}
 }

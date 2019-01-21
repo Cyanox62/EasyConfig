@@ -39,12 +39,14 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.SearchTextbox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.AddPluginButton = new System.Windows.Forms.Button();
+			this.RemovePluginButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// ConfigListBox
 			// 
 			this.ConfigListBox.FormattingEnabled = true;
-			this.ConfigListBox.Location = new System.Drawing.Point(9, 96);
+			this.ConfigListBox.Location = new System.Drawing.Point(12, 129);
 			this.ConfigListBox.Name = "ConfigListBox";
 			this.ConfigListBox.Size = new System.Drawing.Size(287, 303);
 			this.ConfigListBox.Sorted = true;
@@ -97,16 +99,16 @@
 			// 
 			// ConfigValueTextbox
 			// 
-			this.ConfigValueTextbox.Location = new System.Drawing.Point(49, 70);
+			this.ConfigValueTextbox.Location = new System.Drawing.Point(52, 103);
 			this.ConfigValueTextbox.Name = "ConfigValueTextbox";
-			this.ConfigValueTextbox.Size = new System.Drawing.Size(245, 20);
+			this.ConfigValueTextbox.Size = new System.Drawing.Size(247, 20);
 			this.ConfigValueTextbox.TabIndex = 6;
 			this.ConfigValueTextbox.TextChanged += new System.EventHandler(this.ConfigValueTextbox_TextChanged);
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(13, 406);
+			this.label1.Location = new System.Drawing.Point(16, 439);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(41, 13);
 			this.label1.TabIndex = 7;
@@ -114,7 +116,7 @@
 			// 
 			// SearchTextbox
 			// 
-			this.SearchTextbox.Location = new System.Drawing.Point(59, 403);
+			this.SearchTextbox.Location = new System.Drawing.Point(62, 436);
 			this.SearchTextbox.Name = "SearchTextbox";
 			this.SearchTextbox.Size = new System.Drawing.Size(237, 20);
 			this.SearchTextbox.TabIndex = 8;
@@ -123,17 +125,39 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(11, 73);
+			this.label2.Location = new System.Drawing.Point(14, 106);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(34, 13);
 			this.label2.TabIndex = 9;
 			this.label2.Text = "Value";
 			// 
+			// AddPluginButton
+			// 
+			this.AddPluginButton.Location = new System.Drawing.Point(12, 70);
+			this.AddPluginButton.Name = "AddPluginButton";
+			this.AddPluginButton.Size = new System.Drawing.Size(139, 23);
+			this.AddPluginButton.TabIndex = 10;
+			this.AddPluginButton.Text = "Add Plugin";
+			this.AddPluginButton.UseVisualStyleBackColor = true;
+			this.AddPluginButton.Click += new System.EventHandler(this.AddPluginButton_Click);
+			// 
+			// RemovePluginButton
+			// 
+			this.RemovePluginButton.Location = new System.Drawing.Point(156, 70);
+			this.RemovePluginButton.Name = "RemovePluginButton";
+			this.RemovePluginButton.Size = new System.Drawing.Size(139, 23);
+			this.RemovePluginButton.TabIndex = 11;
+			this.RemovePluginButton.Text = "Remove Plugin";
+			this.RemovePluginButton.UseVisualStyleBackColor = true;
+			this.RemovePluginButton.Click += new System.EventHandler(this.RemovePluginButton_Click);
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(312, 431);
+			this.ClientSize = new System.Drawing.Size(311, 468);
+			this.Controls.Add(this.RemovePluginButton);
+			this.Controls.Add(this.AddPluginButton);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.SearchTextbox);
 			this.Controls.Add(this.label1);
@@ -166,6 +190,8 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox SearchTextbox;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Button AddPluginButton;
+		private System.Windows.Forms.Button RemovePluginButton;
 	}
 }
 
