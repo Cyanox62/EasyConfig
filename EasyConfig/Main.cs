@@ -141,17 +141,15 @@ namespace EasyConfig
 			MessageBox.Show("All changes saved", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
-		private async void ConfigValueTextbox_TextChanged(object sender, EventArgs e)
+		private void ConfigValueTextbox_TextChanged(object sender, EventArgs e)
 		{
 			if (ConfigListBox.SelectedItem != null)
 			{
 				configCache[ConfigListBox.SelectedItem.ToString()] = ConfigValueTextbox.Text;
 			}
-
-			await Task.CompletedTask;
 		}
 
-		private async void SearchTextbox_TextChanged(object sender, EventArgs e)
+		private void SearchTextbox_TextChanged(object sender, EventArgs e)
 		{
 			ConfigListBox.Items.Clear();
 
@@ -168,8 +166,6 @@ namespace EasyConfig
 				.Select(x => (object) x.Key)
 				.ToArray()
 			);
-
-			await Task.CompletedTask;
 		}
 	}
 }
