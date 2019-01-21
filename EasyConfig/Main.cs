@@ -164,11 +164,6 @@ namespace EasyConfig
 
 		private void SearchTextbox_TextChanged(object sender, EventArgs e)
 		{
-			if (SearchTextbox.Text == string.Empty)
-			{
-				return;
-			}
-
 			ConfigListBox.Items.Clear();
 
 			if (SearchTextbox.Text == string.Empty)
@@ -178,12 +173,14 @@ namespace EasyConfig
 					ConfigListBox.Items.Add(entry.Key);
 				}
 			}
-
-			ConfigListBox.Items.AddRange(configCache
-				.Where(entry => entry.Key.Contains(SearchTextbox.Text))
-				.Select(x => (object) x.Key)
-				.ToArray()
-			);
+			else
+			{
+				ConfigListBox.Items.AddRange(configCache
+					.Where(entry => entry.Key.Contains(SearchTextbox.Text))
+					.Select(x => (object)x.Key)
+					.ToArray()
+				);
+			}
 		}
 
 		private void AddPluginAssembly(string path)
