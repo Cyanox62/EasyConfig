@@ -11,9 +11,9 @@ namespace EasyConfig
 		public AssemblyDefinition Definition { get; }
 
 		public string Name { get; }
-		public Config[] Configs { get; }
+		public ConfigEntry[] Configs { get; }
 
-		private Plugin(string path, AssemblyDefinition definition, string name, Config[] configs)
+		private Plugin(string path, AssemblyDefinition definition, string name, ConfigEntry[] configs)
 		{
 			Path = path;
 			Definition = definition;
@@ -22,7 +22,7 @@ namespace EasyConfig
 			Configs = configs;
 		}
 
-		private static Config ProcessConfig(Instruction start)
+		private static ConfigEntry ProcessConfig(Instruction start)
 		{
 			return null;
 		}
@@ -57,10 +57,10 @@ namespace EasyConfig
 						return null;
 					}
 
-					List<Config> configs = new List<Config>();
+					List<ConfigEntry> configs = new List<ConfigEntry>();
 					for (int i = 0; i < registerMethod.Body.Instructions.Count; i++)
 					{
-						Config config = Config.TryInstruction(registerMethod.Body.Instructions[i]);
+						ConfigEntry config = ConfigEntry.TryInstruction(registerMethod.Body.Instructions[i]);
 						if (config != null)
 						{
 							configs.Add(config);

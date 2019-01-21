@@ -1,37 +1,74 @@
-﻿using Mono.Cecil;
+﻿using System;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace EasyConfig
 {
 	public enum ConfigType
 	{
-		UNDEFINED = -1,
-		NUMERIC = 0,
-		FLOAT = 1,
-		STRING = 2,
-		BOOL = 3,
-		LIST = 4,
-		NUMERIC_LIST = 5,
-		DICTIONARY = 6,
-		NUMERIC_DICTIONARY = 7
+		Undefined = -1,
+		Integer = 0,
+		Float = 1,
+		String = 2,
+		Boolean = 3,
+		List = 4,
+		IntegerList = 5,
+		Dictionary = 6,
+		IntegerDictionary = 7
 	}
 
-	public class Config
+	public class ConfigEntry
 	{
 		public string Key { get; }
-		public string Value { get; }
+		public string DefaultValue { get; }
 		public ConfigType Type { get; }
 		public string Description { get; }
 
-		public Config(string key, string value, ConfigType type, string description)
+		public ConfigEntry(string key, string defaultValue, ConfigType type, string description)
 		{
 			Key = key;
-			Value = value;
+			DefaultValue = defaultValue;
 			Type = type;
 			Description = description;
 		}
 
-		public static Config TryInstruction(Instruction instruction)
+		public bool TryValue(string newValue)
+		{
+			switch (Type)
+			{
+				case ConfigType.String:
+					break;
+
+				case ConfigType.Boolean:
+					newValue = newValue.ToLower();
+					if (!bool.TryParse(newValue, out _))
+					{
+						return false;
+					}
+					break;
+
+				case ConfigType.Integer:
+					if (!int.TryParse(newValue, out _))
+					{
+						return false;
+					}
+					break;
+
+				case ConfigType.Float:
+					if (!float.TryParse(newValue, out _))
+					{
+						return false;
+					}
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			
+			return true;
+		}
+
+		public static ConfigEntry TryInstruction(Instruction instruction)
 		{
 			// ldarg.0 (getting instance of itself as a Plugin)
 			if (instruction.OpCode.Code != Code.Ldarg_0)
@@ -129,7 +166,7 @@ namespace EasyConfig
 			// Get last ldstr instruction and use it to get description.
 			string configDescription = (string) curInstruction.Next.Next.Operand;
 
-			return new Config(configKey, configValue, configType, configDescription);
+			return new ConfigEntry(configKey, configValue, configType, configDescription);
 		}
 
 		private static Instruction GetInstructionAfter(Instruction instruction, int offset)
@@ -149,7 +186,7 @@ namespace EasyConfig
 
 		public override string ToString()
 		{
-			return $"{Key}: {Value}";
+			return $"{Key}: {DefaultValue}";
 		}
 	}
 }

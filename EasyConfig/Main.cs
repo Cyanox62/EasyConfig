@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
+
+using EasyConfig.Properties;
 
 namespace EasyConfig
 {
 	public partial class Main : Form
 	{
-		private string cPath = null;
+		private string cPath;
 		private readonly Dictionary<string, string> configCache;
+		private readonly Dictionary<string, Plugin> loadedPlugins;
 
 		public Main()
 		{
 			configCache = new Dictionary<string, string>();
-			if (Properties.Settings.Default.lastplugins == null)
+			loadedPlugins = new Dictionary<string, Plugin>();
+			if (Settings.Default.lastplugins == null)
 			{
-				Properties.Settings.Default.lastplugins = new StringCollection();
+				Settings.Default.lastplugins = new StringCollection();
 			}
 
 			InitializeComponent();
@@ -27,20 +30,15 @@ namespace EasyConfig
 
 		private void Main_Load(object sender, EventArgs e)
 		{
-			string prop = Properties.Settings.Default.lastconfig;
-			if (prop.Length > 0 && File.Exists(prop))
+			cPath = Settings.Default.lastconfig;
+			if (!string.IsNullOrEmpty(cPath) && File.Exists(cPath))
 			{
-				cPath = prop;
-				LoadConfig(prop);
+				LoadConfig(cPath);
 			}
 
-			foreach (string path in Properties.Settings.Default.lastplugins)
+			foreach (string path in Settings.Default.lastplugins)
 			{
-				Plugin[] plugins = Plugin.Load(path);
-				foreach (Config config in plugins.SelectMany(x => x.Configs).Where(x => !configCache.ContainsKey(x.Key)))
-				{
-					AddConfig(config.Key, config.Value);
-				}
+				AddPluginAssembly(path);
 			}
 		}
 
@@ -56,13 +54,9 @@ namespace EasyConfig
 			ConfigListBox.Items.Remove(key);
 		}
 
-		private void LoadConfig(string cPath)
+		private void LoadConfig(string path)
 		{
-			if (cPath == null)
-				MessageBox.Show("Error", "Can't find file", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-			// I know this looks like an abomination, but it parses each line asynchronously so large configs don't halt the UI
-			string[] configs = File.ReadAllLines(cPath);
+			string[] configs = File.ReadAllLines(path);
 			foreach (string config in configs.Select(x => x.Trim()))
 			{
 				if (config.Length > 0 &&
@@ -79,11 +73,26 @@ namespace EasyConfig
 			}
 		}
 
+		private void DeleteConfig()
+		{
+			int index = ConfigListBox.SelectedIndex;
+
+			if (index != -1)
+			{
+				string item = (string) ConfigListBox.Items[index];
+
+				configCache.Remove(item);
+				ConfigListBox.Items.RemoveAt(index);
+			}
+
+			ConfigListBox.SelectedIndex = index;
+		}
+
 		private void OpenConfigButton_Click(object sender, EventArgs e)
 		{
 			using (OpenFileDialog openFileDialog = new OpenFileDialog
 			{
-				Filter = "config files (*.txt)|*.txt|All files (*.*)|*.*",
+				Filter = "Config files (*.txt)|*.txt|All files (*.*)|*.*",
 				FilterIndex = 1,
 				RestoreDirectory = true
 			})
@@ -91,17 +100,17 @@ namespace EasyConfig
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
 					cPath = openFileDialog.FileName;
-					Properties.Settings.Default.lastconfig = cPath;
-					Properties.Settings.Default.Save();
+					Settings.Default.lastconfig = cPath;
+					Settings.Default.Save();
 
 					LoadConfig(cPath);
 				}
 			}
 		}
 
-		private void AddConfigButtom_Click(object sender, EventArgs e)
+		private void AddConfigButton_Click(object sender, EventArgs e)
 		{
-			string input = Interaction.InputBox("Enter config to add\n\nFormat: key:value", "Config Adder", "", -1, -1).Trim();
+			string input = Interaction.InputBox("Enter config entry to add\n\nFormat: key:value OR key", "Config Adder").Trim();
 
 			if (input != string.Empty)
 			{
@@ -119,77 +128,48 @@ namespace EasyConfig
 						}
 						else
 						{
-							MessageBox.Show("Key already exists. Please edit the existing config before adding a new config.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							MessageBox.Show(
+								"Config entry key already exists. Please edit the existing entry before add a new entry.",
+								"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						}
 					}
 					else
 					{
-						MessageBox.Show("No value in new config line found. Please put a value next time.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show("No value in new config entry found. Please put a value to the right of the colon or do not insert a colon at all.", "Error",
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 				else
 				{
-					MessageBox.Show("No value in new config line found. Please make sure you have a colon to separate the key from the value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					if (!configCache.ContainsKey(input))
+					{
+						AddConfig(input, string.Empty);
+					}
+					else
+					{
+						MessageBox.Show(
+							"Config entry key already exists. Please edit the existing entry before adding a new entry.",
+							"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
 				}
-			}
-		}
-
-		private void ConfigListBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			ConfigValueTextbox.Text = ConfigListBox.SelectedItem != null ? 
-				configCache[ConfigListBox.SelectedItem.ToString()] : 
-				string.Empty;
-		}
-
-		private void RemoveConfigButton_Click(object sender, EventArgs e)
-		{
-			if (ConfigListBox.SelectedItem != null)
-			{
-				configCache.Remove(ConfigListBox.SelectedItem.ToString());
-				ConfigListBox.Items.Remove(ConfigListBox.SelectedItem);
 			}
 		}
 		
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			List<string> lines = new List<string>(File.ReadAllLines(cPath));
-			for (int i = 0; i < lines.Count; i++)
-			{
-				int cIndex = lines[i].IndexOf(':');
-				if (lines[i].Length > 0 && cIndex != -1 && !lines[i].StartsWith("port_queue:") && !lines[i].Contains("#"))
-				{
-					if (configCache.ContainsKey(lines[i].Substring(0, cIndex)))
-					{
-						lines[i] = $"{lines[i].Substring(0, cIndex)}: {configCache[lines[i].Substring(0, cIndex)]}";
-					}
-					else
-					{
-						lines.Remove(lines[i]);
-					}
-				}
-			}
+			LoadConfig(cPath);
 
-			foreach (KeyValuePair<string, string> entry in configCache)
-			{
-				if (!lines.Contains($"{entry.Key}: {entry.Value}"))
-				{
-					lines.Add($"{entry.Key}: {entry.Value}");
-				}
-			}
-			File.WriteAllLines(cPath, lines);
+			File.WriteAllLines(cPath, configCache.OrderBy(x => x.Key).Select(x => $"{x.Key}: {x.Value}"));
 			MessageBox.Show("All changes saved", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-		}
-
-		private void ConfigValueTextbox_TextChanged(object sender, EventArgs e)
-		{
-			if (ConfigListBox.SelectedItem != null)
-			{
-				configCache[ConfigListBox.SelectedItem.ToString()] = ConfigValueTextbox.Text;
-			}
 		}
 
 		private void SearchTextbox_TextChanged(object sender, EventArgs e)
 		{
+			if (SearchTextbox.Text == string.Empty)
+			{
+				return;
+			}
+
 			ConfigListBox.Items.Clear();
 
 			if (SearchTextbox.Text == string.Empty)
@@ -201,38 +181,142 @@ namespace EasyConfig
 			}
 
 			ConfigListBox.Items.AddRange(configCache
-				.Where(entry => SearchTextbox.Text != string.Empty && entry.Key.Contains(SearchTextbox.Text))
+				.Where(entry => entry.Key.Contains(SearchTextbox.Text))
 				.Select(x => (object) x.Key)
 				.ToArray()
 			);
 		}
 
-		private async void AddPluginButton_Click(object sender, EventArgs e)
+		private void AddPluginAssembly(string path)
 		{
-			using (OpenFileDialog openFileDialog = new OpenFileDialog
+			Plugin[] plugins = Plugin.Load(path);
+			foreach (Plugin plugin in plugins)
 			{
-				Filter = "Smod2 Plugins (*.dll)|*.dll",
-				RestoreDirectory = true
-			})
-			{
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				foreach (ConfigEntry config in plugin.Configs.Where(x => !configCache.ContainsKey(x.Key)))
 				{
-					cPath = openFileDialog.FileName;
-					Properties.Settings.Default.lastplugins.Add(cPath);
-					Properties.Settings.Default.Save();
+					AddConfig(config.Key, config.DefaultValue);
+				}
 
-					Plugin[] plugins = Plugin.Load(cPath);
-					foreach (Config config in plugins.SelectMany(x => x.Configs).Where(x => !configCache.ContainsKey(x.Key)))
+				loadedPlugins.Add(plugin.Name, plugin);
+			}
+		}
+
+		private void RemovePlugin(Plugin plugin)
+		{
+			foreach (ConfigEntry otherConfig in plugin.Configs)
+			{
+				RemoveConfig(otherConfig.Key);
+			}
+
+			loadedPlugins.Remove(plugin.Name);
+			Settings.Default.lastplugins.Remove(plugin.Path);
+			Settings.Default.Save();
+		}
+
+		private void ConfigListBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				case Keys.Delete when (ModifierKeys & Keys.Shift) == Keys.Shift:
+				{
+					string key = (string) ConfigListBox.SelectedItem;
+					Plugin plugin = loadedPlugins.Values.FirstOrDefault(x => x.Configs.Any(y => y.Key == key));
+					RemovePlugin(plugin);
+					break;
+				}
+
+				case Keys.Delete:
+					DeleteConfig();
+					break;
+
+				case Keys.Enter:
+					InspectSelected();
+					break;
+			}
+		}
+
+		private (Plugin plugin, ConfigEntry config) GetConfigByKey(string key)
+		{
+			foreach (Plugin plugin in loadedPlugins.Values)
+			{
+				foreach (ConfigEntry config in plugin.Configs)
+				{
+					if (config.Key == key)
 					{
-						AddConfig(config.Key, config.Value);
+						return (plugin, config);
 					}
 				}
 			}
 
-			await Task.CompletedTask;
+			return (null, null);
 		}
 
-		private void RemovePluginButton_Click(object sender, EventArgs e)
+		private void InspectSelected()
+		{
+			string key = (string)ConfigListBox.SelectedItem;
+			var (plugin, config) = GetConfigByKey(key);
+			bool valid;
+
+			do
+			{
+				valid = true;
+
+				InspectConfig window = plugin == null
+					? new InspectConfig(key, configCache[key])
+					: new InspectConfig(key, configCache[key], plugin, config);
+				window.ShowDialog();
+				window.ValueTextbox.Text = window.ValueTextbox.Text.Trim();
+
+				switch (window.Action)
+				{
+					case InspectAction.ChangeValue:
+						if (config != null && !config.TryValue(window.ValueTextbox.Text))
+						{
+							if (MessageBox.Show("Invalid value type.", 
+								    "Error", 
+								    MessageBoxButtons.RetryCancel,
+								    MessageBoxIcon.Error, 
+								    MessageBoxDefaultButton.Button1) != DialogResult.Cancel)
+							{
+								valid = false;
+							}
+						}
+						else
+						{
+							configCache[key] = window.ValueTextbox.Text;
+						}
+						break;
+
+					case InspectAction.Remove:
+						RemoveConfig(key);
+						break;
+
+					case InspectAction.RemovePlugin:
+						if (plugin == null)
+						{
+							throw new NullReferenceException(
+								$"{nameof(plugin)} is null but {nameof(window)} returned {InspectAction.RemovePlugin}. Something has gone terribly wrong in {nameof(InspectConfig)}.");
+						}
+
+						RemovePlugin(plugin);
+						break;
+				}
+
+				window.Dispose();
+			} while (!valid);
+		}
+
+		private void InspectButton_Click(object sender, EventArgs e)
+		{
+			InspectSelected();
+		}
+
+		private void ConfigListBox_DoubleClick(object sender, EventArgs e)
+		{
+			InspectSelected();
+		}
+
+		private void OpenPluginButton_Click(object sender, EventArgs e)
 		{
 			using (OpenFileDialog openFileDialog = new OpenFileDialog
 			{
@@ -242,15 +326,10 @@ namespace EasyConfig
 			{
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
-					cPath = openFileDialog.FileName;
-					Properties.Settings.Default.lastplugins.Remove(cPath);
-					Properties.Settings.Default.Save();
+					AddPluginAssembly(openFileDialog.FileName);
 
-					Plugin[] plugins = Plugin.Load(cPath);
-					foreach (Config config in plugins.SelectMany(x => x.Configs))
-					{
-						RemoveConfig(config.Key);
-					}
+					Settings.Default.lastplugins.Add(openFileDialog.FileName);
+					Settings.Default.Save();
 				}
 			}
 		}
