@@ -36,7 +36,7 @@ namespace EasyConfig
 			SourceLabel.Text += plugin.Name;
 			DefaultLabel.Text += config.DefaultValue;
 			TypeLabel.Text += config.Type;
-			DescriptionText.Text = config.Description;
+			DescriptionText.Text = config.Description == string.Empty ? "No description provided." : config.Description;
 
 			removePluginButton.Enabled = true;
 		}
