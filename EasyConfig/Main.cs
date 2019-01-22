@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
-
 using EasyConfig.Properties;
 
 namespace EasyConfig
@@ -156,22 +155,28 @@ namespace EasyConfig
 		
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			LoadConfig(cPath);
-
-			string[] lines = File.ReadAllLines(cPath);
-			File.WriteAllLines(cPath, lines.Select(x =>
-			{
-				string[] splits = x.Split(':');
-				if (splits.Length != 0)
+			File.WriteAllLines(cPath, File.ReadAllLines(cPath)
+				.Select(x =>
 				{
-					if (configCache.ContainsKey(splits[0]))
-					{
-						return $"{splits[0]}: {configCache[splits[0]]}";
-					}
-				}
+					x = x.Trim();
 
-				return x;
-			}));
+					if (x.Length == 0 || x[0] == '#')
+					{
+						return x;
+					}
+
+					int index = x.IndexOf(':');
+					if (index != -1 && index != x.Length - 1)
+					{
+						string[] splits = x.Split(':');
+						return configCache.ContainsKey(splits[0]) ? $"{splits[0]}: {configCache[splits[0]]}" : null;
+					}
+
+					return x;
+				})
+				.Where(x => x != null)
+			);
+
 			MessageBox.Show("All changes saved", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
