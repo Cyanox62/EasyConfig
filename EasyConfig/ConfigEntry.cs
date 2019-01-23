@@ -62,7 +62,8 @@ namespace EasyConfig
 					break;
 
 				default:
-					throw new NotImplementedException();
+					return false;
+					// TODO: add list support
 			}
 			
 			return true;

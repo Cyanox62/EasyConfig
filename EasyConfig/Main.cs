@@ -7,6 +7,8 @@ using Microsoft.VisualBasic;
 using System.Windows.Forms;
 using EasyConfig.Properties;
 
+// typing this so i can log in to visual studio when i push because when i press sign in it doesnt do anything
+
 namespace EasyConfig
 {
 	public partial class Main : Form
