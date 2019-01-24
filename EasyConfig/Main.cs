@@ -55,6 +55,8 @@ namespace EasyConfig
 
 		private void LoadConfig(string path)
 		{
+			configCache.Clear();
+			ConfigListBox.Items.Clear();
 			string[] configs = File.ReadAllLines(path);
 			foreach (string config in configs.Select(x => x.Trim()))
 			{
@@ -177,7 +179,7 @@ namespace EasyConfig
 				.Where(x => x != null)
 			);
 
-			MessageBox.Show("All changes saved", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show("All changes saved.", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void SearchTextbox_TextChanged(object sender, EventArgs e)
@@ -210,8 +212,7 @@ namespace EasyConfig
 				{
 					AddConfig(config.Key, config.DefaultValue);
 				}
-
-				loadedPlugins.Add(plugin.Name, plugin);
+				if (!loadedPlugins.ContainsKey(plugin.Name)) loadedPlugins.Add(plugin.Name, plugin);
 			}
 		}
 
