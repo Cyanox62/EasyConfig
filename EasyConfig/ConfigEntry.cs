@@ -36,6 +36,7 @@ namespace EasyConfig
 		{
 			switch (Type)
 			{
+				case ConfigType.List:
 				case ConfigType.String:
 					break;
 
@@ -58,6 +59,16 @@ namespace EasyConfig
 					if (!float.TryParse(newValue, out _))
 					{
 						return false;
+					}
+					break;
+
+				case ConfigType.IntegerList:
+					foreach (string str in newValue.Split(','))
+					{
+						if (!int.TryParse(str.Trim(), out _))
+						{
+							return false;
+						}
 					}
 					break;
 
