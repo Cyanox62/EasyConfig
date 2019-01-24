@@ -14,3 +14,7 @@ GUI interface to make editing SCP:SL server config files easier.
   - `Shift + Del` - Deletes the plugin the current config is part of
   - `Enter` - Inspects the currently selected config
 - Right click context menu to allow easy inspection or removal
+
+
+![](Screenshots/1.png)
+![](Screenshots/2.png)
