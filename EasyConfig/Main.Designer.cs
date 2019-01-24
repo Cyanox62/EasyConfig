@@ -74,6 +74,7 @@
 			// 
 			// AddConfigButton
 			// 
+			this.AddConfigButton.Enabled = false;
 			this.AddConfigButton.Location = new System.Drawing.Point(12, 41);
 			this.AddConfigButton.Name = "AddConfigButton";
 			this.AddConfigButton.Size = new System.Drawing.Size(139, 23);
@@ -84,6 +85,7 @@
 			// 
 			// SaveButton
 			// 
+			this.SaveButton.Enabled = false;
 			this.SaveButton.Location = new System.Drawing.Point(157, 41);
 			this.SaveButton.Name = "SaveButton";
 			this.SaveButton.Size = new System.Drawing.Size(139, 23);
@@ -111,6 +113,7 @@
 			// 
 			// OpenPluginButton
 			// 
+			this.OpenPluginButton.Enabled = false;
 			this.OpenPluginButton.Location = new System.Drawing.Point(156, 12);
 			this.OpenPluginButton.Name = "OpenPluginButton";
 			this.OpenPluginButton.Size = new System.Drawing.Size(139, 23);
@@ -136,7 +139,7 @@
             this.deleteToolStripMenuItem,
             this.removePluginToolStripMenuItem});
 			this.rightClickMenu.Name = "rightClickMenu";
-			this.rightClickMenu.Size = new System.Drawing.Size(181, 92);
+			this.rightClickMenu.Size = new System.Drawing.Size(155, 70);
 			this.rightClickMenu.Opened += new System.EventHandler(this.rightClickMenu_Opened);
 			this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.rightClickMenu_ItemClicked);
 			// 
@@ -144,21 +147,21 @@
 			// 
 			this.inspectToolStripMenuItem.Image = global::EasyConfig.Properties.Resources.inspect;
 			this.inspectToolStripMenuItem.Name = "inspectToolStripMenuItem";
-			this.inspectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.inspectToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.inspectToolStripMenuItem.Text = "Inspect";
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.Image = global::EasyConfig.Properties.Resources.remove;
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.deleteToolStripMenuItem.Text = "Delete";
 			// 
 			// removePluginToolStripMenuItem
 			// 
 			this.removePluginToolStripMenuItem.Image = global::EasyConfig.Properties.Resources.removeplugin;
 			this.removePluginToolStripMenuItem.Name = "removePluginToolStripMenuItem";
-			this.removePluginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.removePluginToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.removePluginToolStripMenuItem.Text = "Remove Plugin";
 			// 
 			// Main

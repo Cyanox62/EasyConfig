@@ -23,7 +23,6 @@ namespace EasyConfig
 			{
 				Settings.Default.lastplugins = new StringCollection();
 			}
-
 			InitializeComponent();
 		}
 
@@ -33,11 +32,10 @@ namespace EasyConfig
 			if (!string.IsNullOrEmpty(cPath) && File.Exists(cPath))
 			{
 				LoadConfig(cPath);
-			}
-
-			foreach (string path in Settings.Default.lastplugins)
-			{
-				AddPluginAssembly(path);
+				foreach (string path in Settings.Default.lastplugins)
+				{
+					AddPluginAssembly(path);
+				}
 			}
 		}
 
@@ -72,6 +70,10 @@ namespace EasyConfig
 					}
 				}
 			}
+
+			AddConfigButton.Enabled = true;
+			OpenPluginButton.Enabled = true;
+			SaveButton.Enabled = true;
 		}
 
 		private void DeleteConfig()
