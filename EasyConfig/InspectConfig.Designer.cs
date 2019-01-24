@@ -150,6 +150,7 @@
 			this.Controls.Add(this.DefaultLabel);
 			this.Controls.Add(this.TypeLabel);
 			this.Controls.Add(this.SourceLabel);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "InspectConfig";
 			this.Text = "Config Inspector";
