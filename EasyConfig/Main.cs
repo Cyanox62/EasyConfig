@@ -157,6 +157,8 @@ namespace EasyConfig
 		
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
+			List<string> savedEntries = new List<string>();
+
 			File.WriteAllLines(cPath, File.ReadAllLines(cPath)
 				.Select(x =>
 				{
@@ -171,12 +173,19 @@ namespace EasyConfig
 					if (index != -1 && index != x.Length - 1)
 					{
 						string[] splits = x.Split(':');
-						return configCache.ContainsKey(splits[0]) ? $"{splits[0]}: {configCache[splits[0]]}" : null;
+						if (configCache.ContainsKey(splits[0]))
+						{
+							savedEntries.Add(splits[0]);
+							return $"{splits[0]}: {configCache[splits[0]]}";
+						}
+
+						return null;
 					}
 
 					return x;
 				})
 				.Where(x => x != null)
+				.Concat(configCache.Where(x => !savedEntries.Contains(x.Key)).Select(x => $"{x.Key}: {x.Value}"))
 			);
 
 			MessageBox.Show("All changes saved.", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -206,13 +215,18 @@ namespace EasyConfig
 		private void AddPluginAssembly(string path)
 		{
 			Plugin[] plugins = Plugin.Load(path);
+
 			foreach (Plugin plugin in plugins)
 			{
 				foreach (ConfigEntry config in plugin.Configs.Where(x => !configCache.ContainsKey(x.Key)))
 				{
 					AddConfig(config.Key, config.DefaultValue);
 				}
-				if (!loadedPlugins.ContainsKey(plugin.Name)) loadedPlugins.Add(plugin.Name, plugin);
+
+				if (!loadedPlugins.ContainsKey(plugin.Name))
+				{
+					loadedPlugins.Add(plugin.Name, plugin);
+				}
 			}
 		}
 
@@ -269,6 +283,12 @@ namespace EasyConfig
 		private void InspectSelected()
 		{
 			string key = (string)ConfigListBox.SelectedItem;
+			// Nothing selected
+			if (key == null)
+			{
+				return;
+			}
+
 			var (plugin, config) = GetConfigByKey(key);
 			bool valid;
 
