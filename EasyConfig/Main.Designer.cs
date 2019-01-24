@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.ConfigListBox = new System.Windows.Forms.ListBox();
 			this.OpenConfigButton = new System.Windows.Forms.Button();
@@ -38,6 +39,11 @@
 			this.SearchTextbox = new System.Windows.Forms.TextBox();
 			this.OpenPluginButton = new System.Windows.Forms.Button();
 			this.InspectButton = new System.Windows.Forms.Button();
+			this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.inspectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.removePluginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.rightClickMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ConfigListBox
@@ -50,6 +56,7 @@
 			this.ConfigListBox.TabIndex = 0;
 			this.ConfigListBox.DoubleClick += new System.EventHandler(this.ConfigListBox_DoubleClick);
 			this.ConfigListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ConfigListBox_KeyDown);
+			this.ConfigListBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ConfigListBox_MouseDown);
 			// 
 			// OpenConfigButton
 			// 
@@ -122,6 +129,35 @@
 			this.InspectButton.UseVisualStyleBackColor = true;
 			this.InspectButton.Click += new System.EventHandler(this.InspectButton_Click);
 			// 
+			// rightClickMenu
+			// 
+			this.rightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.inspectToolStripMenuItem,
+            this.deleteToolStripMenuItem,
+            this.removePluginToolStripMenuItem});
+			this.rightClickMenu.Name = "rightClickMenu";
+			this.rightClickMenu.Size = new System.Drawing.Size(155, 70);
+			this.rightClickMenu.Opened += new System.EventHandler(this.rightClickMenu_Opened);
+			this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.rightClickMenu_ItemClicked);
+			// 
+			// inspectToolStripMenuItem
+			// 
+			this.inspectToolStripMenuItem.Name = "inspectToolStripMenuItem";
+			this.inspectToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.inspectToolStripMenuItem.Text = "Inspect";
+			// 
+			// deleteToolStripMenuItem
+			// 
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.deleteToolStripMenuItem.Text = "Delete";
+			// 
+			// removePluginToolStripMenuItem
+			// 
+			this.removePluginToolStripMenuItem.Name = "removePluginToolStripMenuItem";
+			this.removePluginToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.removePluginToolStripMenuItem.Text = "Remove Plugin";
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +177,7 @@
 			this.Name = "Main";
 			this.Text = "EasyConfig v1.1.0 - Cyandrox";
 			this.Load += new System.EventHandler(this.Main_Load);
+			this.rightClickMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -157,6 +194,10 @@
 		private System.Windows.Forms.TextBox SearchTextbox;
 		private System.Windows.Forms.Button OpenPluginButton;
 		private System.Windows.Forms.Button InspectButton;
+		private System.Windows.Forms.ContextMenuStrip rightClickMenu;
+		private System.Windows.Forms.ToolStripMenuItem inspectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem removePluginToolStripMenuItem;
 	}
 }
 

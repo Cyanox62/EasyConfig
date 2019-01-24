@@ -250,7 +250,7 @@ namespace EasyConfig
 				{
 					string key = (string) ConfigListBox.SelectedItem;
 					Plugin plugin = loadedPlugins.Values.FirstOrDefault(x => x.Configs.Any(y => y.Key == key));
-					RemovePlugin(plugin);
+					if (plugin != null) RemovePlugin(plugin);
 					break;
 				}
 
@@ -366,6 +366,37 @@ namespace EasyConfig
 					Settings.Default.lastplugins.Add(openFileDialog.FileName);
 					Settings.Default.Save();
 				}
+			}
+		}
+
+		private void ConfigListBox_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button != MouseButtons.Right) return;
+			ConfigListBox.SelectedIndex = ConfigListBox.IndexFromPoint(e.X, e.Y);
+			rightClickMenu.Show(Cursor.Position);
+		}
+
+		private void rightClickMenu_Opened(object sender, EventArgs e)
+		{
+			var (plugin, config) = GetConfigByKey((string)ConfigListBox.SelectedItem);
+			if (plugin != null) rightClickMenu.Items[2].Visible = true;
+			else rightClickMenu.Items[2].Visible = false;
+		}
+
+		private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+			switch (e.ClickedItem.Text.ToLower())
+			{
+				case "inspect":
+					InspectSelected();
+					break;
+				case "delete":
+					DeleteConfig();
+					break;
+				case "remove plugin":
+					Plugin plugin = loadedPlugins.Values.FirstOrDefault(x => x.Configs.Any(y => y.Key == (string)ConfigListBox.SelectedItem));
+					RemovePlugin(plugin);
+					break;
 			}
 		}
 	}
