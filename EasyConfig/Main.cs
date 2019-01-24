@@ -374,8 +374,12 @@ namespace EasyConfig
 		private void ConfigListBox_MouseDown(object sender, MouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Right) return;
-			ConfigListBox.SelectedIndex = ConfigListBox.IndexFromPoint(e.X, e.Y);
-			rightClickMenu.Show(Cursor.Position);
+			int index = ConfigListBox.IndexFromPoint(e.X, e.Y);
+			if (index != -1)
+			{
+				ConfigListBox.SelectedIndex = index;
+				rightClickMenu.Show(Cursor.Position);
+			}
 		}
 
 		private void rightClickMenu_Opened(object sender, EventArgs e)
