@@ -15,6 +15,7 @@ GUI interface to make editing SCP:SL server config files easier.
   - `Enter` - Inspects the currently selected config
 - Right click context menu to allow easy inspection or removal
 
+# Images
 
 ![](Screenshots/1.png)
 ![](Screenshots/2.png)
