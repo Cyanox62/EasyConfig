@@ -106,9 +106,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="notebook.ico" />
+    <Content Include="ILRepack.exe" />
     <None Include="Resources\remove.png" />
     <None Include="Resources\removeplugin.png" />
     <None Include="Resources\inspect.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>cd "$(TargetDir)"
+if not exist "packed" mkdir "packed"
+"$(ProjectDir)ILRepack.exe" /out:"packed\EasyConfig.exe" "EasyConfig.exe" "Mono.Cecil.dll" "Mono.Cecil.Mdb.dll" "Mono.Cecil.Pdb.dll" "Mono.Cecil.Rocks.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
